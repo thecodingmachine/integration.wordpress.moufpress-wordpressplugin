@@ -1,0 +1,27 @@
+{
+	"name" : "mouf/integration.wordpress.moufpress-wordpressplugin",
+	"description" : "This is the Wordpress module needed to run Moufpress, a MVC framework for Wordpress based on Mouf and compatible with Splash MVC",
+	"keywords" : [
+		"wordpress",
+		"mvc",
+		"splash",
+		"mouf",
+		"wordpress plugin"
+	],
+	"homepage" : "https://mouf-php.com/packages/mouf/integration.wordpress.moufpress-wordpressplugin",
+	"type" : "wordpress-plugin",
+	"license" : "MIT",
+	"authors" : [{
+			"name" : "David Négrier",
+			"email" : "d.negrier@thecodingmachine.com",
+			"homepage" : "http://mouf-php.com"
+		}
+	],
+	"require" : {
+		"php" : ">=5.3.0",
+		"composer/installers" : "*"
+	},
+	"extra" : {
+		"installer-name" : "moufpress"
+	}
+}

@@ -122,7 +122,8 @@ class MoufPress {
 			
 			// Recover function filters
 			
-			// TODO: enable rights management
+			// Note: rights management is managed directly by the RequireRights annotation.
+			// We could uncomment and work on the code below to have the rights management managed by wp-router instead.
 			/*
 			$phpDocComment = new MoufPhpDocComment($urlCallback->fullComment);
 			$requiresRightArray = $phpDocComment->getAnnotations('RequiresRight');
@@ -138,14 +139,18 @@ class MoufPress {
 				
 			$httpMethods = $urlCallback->httpMethods;
 			if (empty($httpMethods)) {
-				$httpMethods[] = "default";
+				$httpMethods["default"] = 'moufpress_execute_action';
+			} else {
+				foreach ($httpMethods as $httpMethod) {
+					$httpMethods[strtoupper($httpMethod)] = 'moufpress_execute_action';
+				}
 			}
 				
 			foreach ($httpMethods as $httpMethod) {
 				$item= array(
 						'path' => $url,
 						
-						'page_callback' => 'moufpress_execute_action',
+						'page_callback' => $httpMethods,
 						// First argument passed to execute_action as the instance name, second argument is the method.
 						'page_arguments' => array($urlCallback->controllerInstanceName, $urlCallback->methodName, $parametersList, $urlCallback->parameters, $urlCallback->filters),
 						'access_callback' => TRUE,
@@ -219,8 +224,27 @@ class MoufPress {
 			// FIXME: the analysis should be performed during getDrupalMenus for performance.
 			$refMethod = $refClass->getMethod($method); // $refMethod is an instance of MoufReflectionMethod
 		
+			
+			
+			
+			$pathinfo = isset( $_SERVER['PATH_INFO'] ) ? $_SERVER['PATH_INFO'] : '';
+			list( $pathinfo ) = explode( '?', $pathinfo );
+			$pathinfo = str_replace( "%", "%25", $pathinfo );
+			list( $req_uri ) = explode( '?', $_SERVER['REQUEST_URI'] );
+			$home_path = trim( parse_url( home_url(), PHP_URL_PATH ), '/' );
+			
+			// Trim path info from the end and the leading home path from the
+			// front.
+			$req_uri = str_replace($pathinfo, '', $req_uri);
+			$req_uri = trim($req_uri, '/');
+			$req_uri = preg_replace("|^$home_path|i", '', $req_uri);
+			$req_uri = trim($req_uri, '/');
+			$requestParts = explode('/', $req_uri);
+			
+			
+			
 			$context = new SplashRequestContext();
-			$context->setUrlParameters(array_map(function($itemPos) { return arg($itemPos); }, $urlParameters));
+			$context->setUrlParameters(array_map(function($itemPos) use ($requestParts) { return $requestParts[$itemPos]; }, $urlParameters));
 		
 			/****/
 			$args = array();

@@ -21,6 +21,10 @@ require_once dirname(__FILE__).'/../../../mouf/Mouf.php';
 class MoufPress {
 	public function __construct() {
 		add_action('wp_router_generate_routes', array($this, 'generate_routes'), 10, 1);
+		
+		add_action( 'widgets_init', function(){
+			register_widget( 'Mouf\\Integration\\Wordpress\\Moufpress\\MoufpressWidget' );
+		});
 	}
 	
 	public function generate_routes( WP_Router $router ) {

@@ -18,10 +18,15 @@
 * file that was distributed with this source code.
 */
  
-require_once __DIR__.'/MoufPress.php';
+require_once __DIR__.'/../../../mouf/Mouf.php';
 
 // Let's define the ROOT_URL constant
 define('ROOT_URL', parse_url(get_bloginfo('url'),PHP_URL_PATH).'/');
 define('MOUF_URL', ROOT_URL.'vendor/mouf/mouf/');
 
-$moufPress = new MoufPress();
+function moufpress_execute_action($instanceName, $methodName, $urlParameters, $parameters, $filters) {
+	global $moufPress;
+	$moufPress->executeAction($instanceName, $methodName, $urlParameters, $parameters, $filters);
+}
+
+$moufPress = Mouf::getMoufpress();
